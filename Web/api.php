@@ -16,8 +16,8 @@ $radiusKm  = 3;
 $proximity = mathGeoProximity($sourceLat, $sourceLon, $radiusKm);
 $result    = mysql_query("
     SELECT * 
-    FROM   stores
-    WHERE  (lat BETWEEN " . number_format($proximity['latitudeMin'], 12, '.', '') . "
+    FROM   drivers
+    WHERE  idle=1 AND (lat BETWEEN " . number_format($proximity['latitudeMin'], 12, '.', '') . "
             AND " . number_format($proximity['latitudeMax'], 12, '.', '') . ")
       AND (lng BETWEEN " . number_format($proximity['longitudeMin'], 12, '.', '') . "
             AND " . number_format($proximity['longitudeMax'], 12, '.', '') . ")
