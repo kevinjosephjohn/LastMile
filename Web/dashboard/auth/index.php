@@ -24,7 +24,6 @@ if (isset($_POST['tag']) && $_POST['tag'] != '') {
             $response["user"]["lname"] = $user["lastname"];
             $response["user"]["email"] = $user["email"];
             $response["user"]["phone"] = $user["phone"];
-            $response["user"]["gcm_regid"] = $user["gcm_regid"];
             $response["user"]["uid"] = $user["unique_id"];
             echo json_encode($response);
         } else {
@@ -100,8 +99,6 @@ else if ($tag == 'register') {
         $email = $_POST['email'];
         $password = $_POST['password'];
         $phone = $_POST['phone'];
-        $gcm_regid = $_POST['gcm_regid'];
-
         $subject = "Registration";
         $message = "Hello $fname,nnYou have sucessfully registered to our service.nnRegards,nAdmin.";
         $from = "hello@lastmile.io";
@@ -125,7 +122,7 @@ else if ($tag == 'register') {
 }
 else {
             // store user
-            $user = $db->storeUser($fname, $lname, $email, $phone, $gcm_regid, $password);
+            $user = $db->storeUser($fname, $lname, $email, $phone, $password);
             if ($user) {
                 // user stored successfully
             $response["success"] = 1;
@@ -133,7 +130,6 @@ else {
             $response["user"]["lname"] = $user["lastname"];
             $response["user"]["email"] = $user["email"];
             $response["user"]["phone"] = $user["phone"];
-            $response["user"]["gcm_regid"] = $user["gcm_regid"];
             $response["user"]["uid"] = $user["unique_id"];
                mail($email,$subject,$message,$headers);
                 echo json_encode($response);

@@ -185,9 +185,9 @@
 					<span class="arrow"></span>
 				</a>
 				<ul class="sub-menu">
-					<li><a href="#">All Drivers</a></li>
-                    <li><a href="#">Busy Drivers</a></li>
-                    <li><a href="#">Idle Drivers</a></li>
+					<li><a href="drivers.php?status=all">All Drivers</a></li>
+                    <li><a href="drivers.php?status=busy">Busy Drivers</a></li>
+                    <li><a href="drivers.php?status=idle">Idle Drivers</a></li>
 
                     
 				</ul>
@@ -202,7 +202,7 @@
 					<span class="arrow"></span>
 				</a>
 				<ul class="sub-menu">
-					<li><a href="#">Add Driver</a></li>
+					<li><a href="adddriver.php">Add Driver</a></li>
                     <li><a href="#">Today's Bookings</a></li>
                     <li><a href="#">Pick Up</a></li>
                     

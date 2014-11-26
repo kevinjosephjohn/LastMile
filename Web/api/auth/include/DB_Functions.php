@@ -44,12 +44,12 @@ return false;
      * Adding new user to mysql database
      * returns user details
      */
-    public function storeUser($fname, $lname, $email, $phone, $password) {
+    public function storeUser($fname, $lname, $email, $phone, $gcm_regid, $password) {
         $uuid = uniqid('', true);
         $hash = $this->hashSSHA($password);
         $encrypted_password = $hash["encrypted"]; // encrypted password
         $salt = $hash["salt"]; // salt
-        $result = mysql_query("INSERT INTO users(unique_id, firstname, lastname, email, phone, encrypted_password, salt, created_at) VALUES('$uuid', '$fname', '$lname', '$email','$phone', '$encrypted_password', '$salt', NOW())");
+        $result = mysql_query("INSERT INTO users(unique_id, firstname, lastname, email, phone, gcm_regid, encrypted_password, salt, created_at) VALUES('$uuid', '$fname', '$lname', '$email','$phone','$gcm_regid','$encrypted_password', '$salt', NOW())");
         // check for successful store
         if ($result) {
             // get user details
@@ -164,7 +164,6 @@ public function validEmail($email)
             return false;
         }
     }
-
         public function isPhoneExisted($phone) {
         $result = mysql_query("SELECT phone from users WHERE phone = '$phone'");
         $no_of_rows = mysql_num_rows($result);

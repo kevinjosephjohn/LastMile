@@ -12,9 +12,9 @@ and open the template in the editor.
             $(document).ready(function(){
                
             });
-            function sendPushNotification(id){
-                var data = $('form#'+id).serialize();
-                $('form#'+id).unbind('submit');                
+            function sendPushNotification(uid){
+                var data = $('form#'+uid).serialize();
+                $('form#'+uid).unbind('submit');                
                 $.ajax({
                     url: "send_message.php",
                     type: 'GET',
@@ -113,8 +113,8 @@ and open the template in the editor.
                     while ($row = mysql_fetch_array($users)) {
                         ?>
                         <li>
-                            <form id="<?php echo $row["id"] ?>" name="" method="post" onsubmit="return sendPushNotification('<?php echo $row["id"] ?>')">
-                                <label>Name: </label> <span><?php echo $row["name"] ?></span>
+                            <form id="<?php echo $row["uid"] ?>" name="" method="post" onsubmit="return sendPushNotification('<?php echo $row["uid"] ?>')">
+                                <label>Name: </label> <span><?php echo $row["fname"] ?></span>
                                 <div class="clear"></div>
                                 <label>Email:</label> <span><?php echo $row["email"] ?></span>
                                 <div class="clear"></div>
