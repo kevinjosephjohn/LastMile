@@ -25,7 +25,7 @@ if (isset($_POST['tag']) && $_POST['tag'] != '') {
             $response["user"]["email"] = $user["email"];
             $response["user"]["phone"] = $user["phone"];
             $response["user"]["gcm_regid"] = $user["gcm_regid"];
-            $response["user"]["uid"] = $user["unique_id"];
+            $response["user"]["uid"] = $user["uid"];
             echo json_encode($response);
         } else {
             // user not found

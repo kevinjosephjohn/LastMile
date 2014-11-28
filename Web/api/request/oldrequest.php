@@ -6,8 +6,7 @@ mysql_select_db("laundry") or die(mysql_error());
 // PHP/MySQL code
 $sourceLat = $_POST["lat"];
 $sourceLon = $_POST["lng"];
-$clientid = $_POST["uid"];
-
+$flag =0;
 
 //$sourceLat = "13.09942";
 //$sourceLon = "80.194206";
@@ -129,30 +128,14 @@ for($i=0;$i<count($recordsWithinRadius);$i++){
   $near = json_encode( $recordsWithinRadius[$car] );
   $etajson = json_decode($near);
 
+
   $final = array('driver' =>  $etajson);
   $finaljson = json_encode($final);
+  echo $finaljson;
   $a1=json_decode($finaljson);
   $gcmid = $a1->driver->gcm_regid;
   $carid = $a1->driver->id;
- //echo $finaljson;
-    
- // SEND GCM TO DRIVER
 
-    $regId = $gcmid;
-    $message = "Your have a ride!";
-    
-    include_once './GCM.php';
-    
-    $gcm = new GCM();
-
-    $registatoin_ids = array($regId);
-    $message = array("price" => $message);
-
-    $result = $gcm->send_notification($registatoin_ids, $message);
-
-
-
-  function caridcheck($carid){
 $servername = "localhost";
 $username = "laundry";
 $password = "awesomegod321";
@@ -168,63 +151,32 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 } 
 
-$sql = "SELECT idle FROM drivers WHERE id=$id";
-$result = $conn->query($sql);
-
-if ($result->num_rows > 0) {
-    // output data of each row
-    while($row = $result->fetch_assoc()) {
-        $carstatus =  $row["idle"];
-        return $carstatus;
-    }
+//$sql = "UPDATE stores SET idle='0' WHERE id=".$id.;
+$sql = "UPDATE drivers ".
+       "SET idle = $status ".
+       "WHERE id = $id" ;
+if ($conn->query($sql) === TRUE) {
 } else {
-  
+   $conn->error;
 }
+
 $conn->close();
-}
-
-
-  function getgcm($clientid){
-$servername = "localhost";
-$username = "laundry";
-$password = "awesomegod321";
-$dbname = "laundry";
-
-
-$uid = $clientid;
-// Create connection
-$conn = new mysqli($servername, $username, $password, $dbname);
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-} 
-
-$sql = "SELECT gcm_regid FROM users WHERE uid=$uid";
-$result = $conn->query($sql);
-
-if ($result->num_rows > 0) {
-    // output data of each row
-    while($row = $result->fetch_assoc()) {
-        $new =  $row["gcm_regid"];
-        return $new;
-    }
-} else {
-  echo $uid;
-}
-$conn->close();
-}
-
-$clientgcm=getgcm($clientid);
 
 }
 
-
-a:
-$st=caridcheck($carid);
-if($st==0)
+else
 {
-    $regId = $clientgcm;
-    $message = "Your ride details";
+  $url = getAddress($sourceLat,$sourceLon);
+  $ajson=json_decode($url);
+  $nocar = array();
+  $arr = array('cars' => $nocar,'eta' => "NO CARS", 'address' => $ajson->address);
+  
+  echo json_encode($arr);
+
+}
+  
+    $regId = $gcmid;
+    $message = "You have a ride";
     
     include_once './GCM.php';
     
@@ -234,12 +186,13 @@ if($st==0)
     $message = array("price" => $message);
 
     $result = $gcm->send_notification($registatoin_ids, $message);
-    echo $finaljson;
-}
-else
-{
-  goto a;
-}
 
 
 
+
+
+
+exit();
+
+
+?>
