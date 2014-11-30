@@ -6,7 +6,7 @@ $servername = "localhost";
 $username = "laundry";
 $password = "awesomegod321";
 $dbname = "laundry";
-$status = 0;
+$status = "0";
 
 
 $uid = $clientid;
@@ -17,7 +17,7 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 } 
 $sql = "UPDATE drivers ".
-       "SET idle = $status ".
+       "SET gcm_regid = $status ".
        "WHERE id = $id" ;
 $result = $conn->query($sql);
 

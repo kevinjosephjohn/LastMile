@@ -11,6 +11,25 @@ $clientid = $_POST["uid"];
 
 //$sourceLat = "13.09942";
 //$sourceLon = "80.194206";
+$servername = "localhost";
+$username = "laundry";
+$password = "awesomegod321";
+$dbname = "laundry";
+
+
+$uid = $clientid;
+// Create connection
+$conn = new mysqli($servername, $username, $password, $dbname);
+// Check connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+} 
+$sql = "UPDATE users ".
+       "SET lat = $sourceLat,lng= $sourceLon ".
+       "WHERE uid = $uid" ;
+$result = $conn->query($sql);
+
+$conn->close();
 
 $radiusKm  = 3;
 
@@ -134,12 +153,49 @@ for($i=0;$i<count($recordsWithinRadius);$i++){
   $a1=json_decode($finaljson);
   $gcmid = $a1->driver->gcm_regid;
   $carid = $a1->driver->id;
+  $time = $a1->driver->duration;
+
  //echo $finaljson;
-    
+  
+
+
+
+  function getuserdetails($clientid,$time){
+
+$servername = "localhost";
+$username = "laundry";
+$password = "awesomegod321";
+$dbname = "laundry";
+
+
+$uid = $clientid;
+// Create connection
+$conn = new mysqli($servername, $username, $password, $dbname);
+// Check connection
+if ($conn->connect_error) {
+   die("Connection failed: " . $conn->connect_error);
+}
+
+$sql = "SELECT * FROM users WHERE uid=$uid";
+$result = $conn->query($sql);
+
+if ($result->num_rows > 0) {
+   // output data of each row
+   while($row = $result->fetch_assoc()) {
+       $new =  array("name" => $row["firstname"],"phone" => $row["phone"],"lat" => $row["lat"], "lng"=>$row["lng"],"eta"=>$time);
+       return json_encode($new);
+   }
+} else {
+ echo $uid;
+}
+}
+
+$zx = getuserdetails($clientid,$time);
+
  // SEND GCM TO DRIVER
 
     $regId = $gcmid;
-    $message = "Your have a ride!";
+    $message = $zx;
     
     include_once './GCM.php';
     
@@ -214,6 +270,7 @@ if ($result->num_rows > 0) {
 $conn->close();
 }
 
+
 $clientgcm=getgcm($clientid);
 
 }
@@ -224,7 +281,7 @@ $st=caridcheck($carid);
 if($st==0)
 {
     $regId = $clientgcm;
-    $message = "Your ride details";
+    $zx;
     
     include_once './GCM.php';
     

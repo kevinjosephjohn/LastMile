@@ -14,10 +14,8 @@ if (isset($_POST['tag']) && $_POST['tag'] != '') {
         // Request type is check Login
         $email = $_POST['email'];
         $password = $_POST['password'];
-        $gcm_regid = $_POST['gcm_regid'];   
-             // check for user
-        $user = $db->getUserByEmailAndPassword($email, $password, $gcm_regid);
-        $update = $db->updategcmid($email, $gcm_regid);
+        // check for user
+        $user = $db->getUserByEmailAndPassword($email, $password);
         if ($user != false) {
             // user found
             // echo json with success = 1
@@ -136,7 +134,7 @@ else {
             $response["user"]["email"] = $user["email"];
             $response["user"]["phone"] = $user["phone"];
             $response["user"]["gcm_regid"] = $user["gcm_regid"];
-            $response["user"]["uid"] = $user["uid"];
+            $response["user"]["uid"] = $user["unique_id"];
                mail($email,$subject,$message,$headers);
                 echo json_encode($response);
             } else {
