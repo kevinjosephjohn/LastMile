@@ -1,16 +1,16 @@
 <?php
 /**
  **/
-if (isset($_POST['tag']) && $_POST['tag'] != '') {
-    // Get tag
-    $tag = $_POST['tag'];
+if (isset($_POST['type']) && $_POST['type'] != '') {
+    // Get type
+    $type = $_POST['type'];
     // Include Database handler
     require_once 'include/DB_Functions.php';
     $db = new DB_Functions();
     // response Array
-    $response = array("tag" => $tag, "success" => 0, "error" => 0);
-    // check for tag type
-    if ($tag == 'login') {
+    $response = array("type" => $type, "success" => 0, "error" => 0);
+    // check for type type
+    if ($type == 'login') {
         // Request type is check Login
         $email = $_POST['email'];
         $password = $_POST['password'];
@@ -37,7 +37,7 @@ if (isset($_POST['tag']) && $_POST['tag'] != '') {
             echo json_encode($response);
         }
     }
-  else if ($tag == 'chgpass'){
+  else if ($type == 'chgpass'){
   $email = $_POST['email'];
   $newpassword = $_POST['newpas'];
   $hash = $db->hashSSHA($newpassword);
@@ -66,7 +66,7 @@ echo json_encode($response);
              echo json_encode($response);
 }
 }
-else if ($tag == 'forpass'){
+else if ($type == 'forpass'){
 $forgotpassword = $_POST['forgotpassword'];
 $randomcode = $db->random_string();
 $hash = $db->hashSSHA($randomcode);
@@ -95,7 +95,7 @@ echo json_encode($response);
              echo json_encode($response);
 }
 }
-else if ($tag == 'register') {
+else if ($type == 'register') {
         // Request type is Register new user
         $fname = $_POST['fname'];
         $lname = $_POST['lname'];
