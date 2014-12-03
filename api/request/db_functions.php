@@ -46,7 +46,7 @@ class DB_Functions {
      * Getting all users
      */
     public function getAllUsers() {
-        $result = mysql_query("select * FROM users");
+        $result = mysql_query("select * FROM drivers");
         return $result;
     }
 

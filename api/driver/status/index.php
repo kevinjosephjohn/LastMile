@@ -9,12 +9,21 @@ if ( isset( $_POST['type'] ) && $_POST['type'] != '' ) {
   $password = "awesomegod321";
   $dbname = "laundry";
 
-  $id = $_POST['id'];
+  $location=$_POST["location"];
+  $id = $_POST['did'];
   $lat = $_POST["lat"];
   $lng = $_POST["lng"];
 
 
  if ( $type == 'update' ) {
+
+$routes=json_decode(file_get_contents('https://maps.googleapis.com/maps/api/directions/json?origin='.$location.'&destination='.$location.'&alternatives=true&sensor=false&key=AIzaSyD6qy0v37hnfV300SLcnnzA9oryImoF2E4'))->routes;
+
+$location = $routes[0]->bounds->northeast;
+
+$lat =  $routes[0]->bounds->northeast->lat;
+$lng =  $routes[0]->bounds->northeast->lng;
+
 
     $conn = new mysqli( $servername, $username, $password, $dbname );
     if ( $conn->connect_error ) {
@@ -25,7 +34,7 @@ if ( isset( $_POST['type'] ) && $_POST['type'] != '' ) {
       "WHERE id = $id" ;
     $result = $conn->query( $sql );
     $conn->close();
-    echo "updated";
+    echo json_encode($location);
 
 }
 
