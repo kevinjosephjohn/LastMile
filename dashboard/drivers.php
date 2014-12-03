@@ -57,7 +57,7 @@ if (isset($_GET['status']) && $_GET['status'] != '') {
     if ($status == 'all') {
     
 // sending query
-$result = mysql_query( "SELECT * FROM {$table}" );
+$result = mysql_query( "SELECT id,firstname,phone,email FROM {$table}" );
 if ( !$result ) {
     die( "Query to show fields from table failed" );
 }
@@ -91,7 +91,7 @@ mysql_free_result( $result );
     }
   else if ($status == 'busy'){
 // sending query
-$result = mysql_query( "SELECT * 
+$result = mysql_query( "SELECT id,firstname,phone,email
     FROM   drivers
     WHERE  idle=0" );
 if ( !$result ) {
@@ -127,7 +127,7 @@ mysql_free_result( $result );
 else if ($status == 'idle'){
     
 // sending query
-$result = mysql_query( "SELECT * FROM {$table}" );
+$result = mysql_query( "SELECT id,firstname,phone,email FROM {$table} WHERE idle=1" );
 if ( !$result ) {
     die( "Query to show fields from table failed" );
 }
@@ -158,6 +158,42 @@ echo "</tbody>";
 echo "</table>";
 mysql_free_result( $result );
 }
+
+else if ($status == 'offline'){
+    
+// sending query
+$result = mysql_query( "SELECT id,firstname,phone,email FROM {$table} WHERE idle=2" );
+if ( !$result ) {
+    die( "Query to show fields from table failed" );
+}
+
+$fields_num = mysql_num_fields( $result );
+
+echo "<table class=\"table table-hover table-condensed\"><thead><tr>";
+//printing table headers
+for ( $i=0; $i<$fields_num; $i++ ) {
+    $field = mysql_fetch_field( $result );
+    echo "<th style='width:1%'>{$field->name}</th>";
+}
+echo "</thead>\n";
+echo "<tbody>";
+echo "<tr>";
+// printing table rows
+while ( $row = mysql_fetch_row( $result ) ) {
+    echo "<tr>";
+    // $row is array... foreach( .. ) puts every element
+    // of $row to $cell variable
+    foreach ( $row as $cell )
+        echo "<td class='v-align-middle'>$cell</td>";
+
+    echo "</tr>";
+
+}
+echo "</tbody>";
+echo "</table>";
+mysql_free_result( $result );
+}
+
 else {
          $response["error"] = 3;
          $response["error_msg"] = "JSON ERROR";
