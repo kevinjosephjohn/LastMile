@@ -47,6 +47,25 @@ else if ( $type == 'ignore' ) {
     $conn->close();
     echo "ignored";
 }
+else if ( $type == 'location' ) {
+
+
+ $conn = new mysqli( $servername, $username, $password, $dbname );
+    if ( $conn->connect_error ) {
+      die( "Connection failed: " . $conn->connect_error );
+    }
+$sql = "SELECT lat, lng FROM drivers WHERE id = $id";
+$result = $conn->query( $sql );
+
+if ($result->num_rows > 0) {
+    // output data of each row
+    while($row = $result->fetch_assoc()) {
+        $location = array("lat"=> $row["lat"],"lng"=> $row["lng"]);
+        echo json_encode($location);
+    }
+} 
+$conn->close();
+}
 else if ( $type == 'request' ) {
 $conn = mysql_connect("localhost", "laundry", "awesomegod321") or die(mysql_error());
 mysql_select_db("laundry") or die(mysql_error());

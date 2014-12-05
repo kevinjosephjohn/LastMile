@@ -52,6 +52,7 @@ else if ( $type == 'accept' ) {
     echo "accepted";
 
 }
+
   else if ( $type == 'online' ) {
 
     $conn = new mysqli( $servername, $username, $password, $dbname );
@@ -81,4 +82,6 @@ else if ( $type == 'offline' ) {
     echo "offline";
 
 }
+
+
 }
