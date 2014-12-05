@@ -201,7 +201,7 @@ $result = $conn->query($sql);
 if ($result->num_rows > 0) {
    // output data of each row
    while($row = $result->fetch_assoc()) {
-       $new =  array("name" => $row["firstname"],"phone" => $row["phone"],"lat" => $row["lat"], "lng"=>$row["lng"],"eta"=>$time);
+       $new =  array("id" => $row["uid"],"name" => $row["firstname"],"phone" => $row["phone"],"lat" => $row["lat"], "lng"=>$row["lng"],"eta"=>$time);
        return json_encode($new);
    }
 } else {
