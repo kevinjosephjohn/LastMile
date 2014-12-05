@@ -203,6 +203,8 @@ $recordsWithinRadius[$car]['duration']=$recordsWithinRadius[$car]['duration']." 
   $gcmid = $a1->driver->gcm_regid;
   $carid = $a1->driver->id;
   $time = $a1->driver->duration;
+  $clientaddress = $a1->driver->address;
+
   function getuserdetails($clientid,$time){
 $servername = "localhost";
 $username = "laundry";
@@ -220,7 +222,7 @@ $result = $conn->query($sql);
 if ($result->num_rows > 0) {
    // output data of each row
    while($row = $result->fetch_assoc()) {
-       $new =  array("id" => $row["uid"],"name" => $row["firstname"],"phone" => $row["phone"],"lat" => $row["lat"], "lng"=>$row["lng"],"eta"=>$time);
+       $new =  array("id" => $row["uid"],"name" => $row["firstname"],"phone" => $row["phone"],"lat" => $row["lat"], "lng"=>$row["lng"],"eta"=>$time,"eta"=>$clientaddress);
        return json_encode($new);
    }
 } else {
