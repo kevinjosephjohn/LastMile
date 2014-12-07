@@ -9,7 +9,10 @@ if ( isset( $_POST['type'] ) && $_POST['type'] != '' ) {
   $password = "awesomegod321";
   $dbname = "laundry";
 
-  $location=$_POST["location"];
+  $loc=$_POST["location"];
+  $add =explode( ',', $loc);
+  $location = "$add[0],$add[1]";
+  $rot = $add[2];
   $id = $_POST['did'];
   $cid = $_POST['cid'];
   $lat = $_POST["lat"];
@@ -18,23 +21,25 @@ if ( isset( $_POST['type'] ) && $_POST['type'] != '' ) {
 
  if ( $type == 'update' ) {
 
-$routes=json_decode(file_get_contents('https://maps.googleapis.com/maps/api/directions/json?origin='.$location.'&destination='.$location.'&alternatives=true&sensor=false&key=AIzaSyD6qy0v37hnfV300SLcnnzA9oryImoF2E4'))->routes;
+$routes=json_decode(file_get_contents('https://maps.googleapis.com/maps/api/directions/json?origin='.$location.'&destination='.$location.'&alternatives=true&sensor=false&key=AIzaSyAMYDowI6uyNXbeMXPvvOdGup5RjhfrSpw'))->routes;
 
-$location = $routes[0]->bounds->northeast;
+// $location = $routes[0]->bounds->northeast;
 
 $lat =  $routes[0]->bounds->northeast->lat;
 $lng =  $routes[0]->bounds->northeast->lng;
-
+$rotation = stripslashes($rot);
 
     $conn = new mysqli( $servername, $username, $password, $dbname );
     if ( $conn->connect_error ) {
       die( "Connection failed: " . $conn->connect_error );
     }
     $sql = "UPDATE drivers ".
-      "SET lat = '$lat',lng = '$lng'".
+      "SET lat = '$lat',lng = '$lng',rot = '$rot'".
       "WHERE id = $id" ;
     $result = $conn->query( $sql );
     $conn->close();
+
+    $location = array('lat' => $lat,'lng' => $lng,'rot' => $rot );
     echo json_encode($location);
 
 }
