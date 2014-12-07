@@ -11,62 +11,8 @@ if ( isset( $_POST['type'] ) && $_POST['type'] != '' ) {
   $sourceLat = $_POST["lat"];
   $sourceLon = $_POST["lng"];
   $clientid = $_POST["uid"];
- if ( $type == 'accept' ) {
-    $conn = new mysqli( $servername, $username, $password, $dbname );
-    if ( $conn->connect_error ) {
-      die( "Connection failed: " . $conn->connect_error );
-    }
-    $sql = "UPDATE drivers ".
-      "SET idle = '1'".
-      "WHERE id = $id" ;
-    $result = $conn->query( $sql );
-    $conn->close();
-    echo "cancelled";
-}
-  else if ( $type == 'cancel' ) {
-    $conn = new mysqli( $servername, $username, $password, $dbname );
-    if ( $conn->connect_error ) {
-      die( "Connection failed: " . $conn->connect_error );
-    }
-    $sql = "UPDATE drivers ".
-      "SET idle = '1'".
-      "WHERE id = $id" ;
-    $result = $conn->query( $sql );
-    $conn->close();
-    echo "cancelled";
-}
-else if ( $type == 'ignore' ) {
-    $conn = new mysqli( $servername, $username, $password, $dbname );
-    if ( $conn->connect_error ) {
-      die( "Connection failed: " . $conn->connect_error );
-    }
-    $sql = "UPDATE drivers ".
-      "SET idle = '2'".
-      "WHERE id = $id" ;
-    $result = $conn->query( $sql );
-    $conn->close();
-    echo "ignored";
-}
-else if ( $type == 'location' ) {
-
-
- $conn = new mysqli( $servername, $username, $password, $dbname );
-    if ( $conn->connect_error ) {
-      die( "Connection failed: " . $conn->connect_error );
-    }
-$sql = "SELECT lat, lng FROM drivers WHERE id = $id";
-$result = $conn->query( $sql );
-
-if ($result->num_rows > 0) {
-    // output data of each row
-    while($row = $result->fetch_assoc()) {
-        $location = array("lat"=> $row["lat"],"lng"=> $row["lng"]);
-        echo json_encode($location);
-    }
-} 
-$conn->close();
-}
-else if ( $type == 'request' ) {
+  $rideraddress = $_POST["rideraddress"];
+  if ( $type == 'request' ) {
 $conn = mysql_connect("localhost", "laundry", "awesomegod321") or die(mysql_error());
 mysql_select_db("laundry") or die(mysql_error());
 // PHP/MySQL code
@@ -160,7 +106,7 @@ foreach($recordsWithinRadius as &$r){
   $duration=split(' ',$duration);
   
   $r['duration']=$duration[0];
-  $r['address']=$json->address;
+  $clientaddress=$json->address;
   
 }
 //sort
@@ -176,6 +122,8 @@ for($i=0;$i<count($recordsWithinRadius);$i++){
 }
 }
 $recordsWithinRadius[$car]['duration']=$recordsWithinRadius[$car]['duration']." min";
+$recordsWithinRadius[$car]['address']=$recordsWithinRadius[$car]['address'];
+
   $nearcar = $recordsWithinRadius[$car];
 
   $driverid = $nearcar["id"];
@@ -187,11 +135,13 @@ $recordsWithinRadius[$car]['duration']=$recordsWithinRadius[$car]['duration']." 
   $driverlng = $nearcar["lng"];
   $driverduration = $nearcar["duration"];
   $drivergcmid = $nearcar["gcm_regid"];
+  $driveraddress = $nearcar["address"];
 
 
 
 
-  $selected = array("id" => $driverid,"duration" => $driverduration,"drivename" => $drivername,"phone" => $phone,"carname" => $carname,"carno" => $carno,"phone" => $phone,"lat" => $driverlat,"lng" => $driverlng,"gcm_regid" => $drivergcmid);
+
+  $selected = array("id" => $driverid,"duration" => $driverduration,"drivename" => $drivername,"phone" => $phone,"carname" => $carname,"carno" => $carno,"phone" => $phone,"lat" => $driverlat,"lng" => $driverlng,"address" => $driveraddress,"gcm_regid" => $drivergcmid);
 
 
   $near = json_encode( $selected );
@@ -203,9 +153,9 @@ $recordsWithinRadius[$car]['duration']=$recordsWithinRadius[$car]['duration']." 
   $gcmid = $a1->driver->gcm_regid;
   $carid = $a1->driver->id;
   $time = $a1->driver->duration;
-  $clientaddress = $a1->driver->address;
+  $newaddress = $a1->driver->address;
 
-  function getuserdetails($clientid,$time){
+  function getuserdetails($clientid,$time,$rideraddress){
 $servername = "localhost";
 $username = "laundry";
 $password = "awesomegod321";
@@ -222,14 +172,14 @@ $result = $conn->query($sql);
 if ($result->num_rows > 0) {
    // output data of each row
    while($row = $result->fetch_assoc()) {
-       $new =  array("id" => $row["uid"],"name" => $row["firstname"],"phone" => $row["phone"],"lat" => $row["lat"], "lng"=>$row["lng"],"eta"=>$time,"eta"=>$clientaddress);
+       $new =  array("id" => $row["uid"],"name" => $row["firstname"],"phone" => $row["phone"],"lat" => $row["lat"], "lng"=>$row["lng"],"eta"=>$time,"address"=>$rideraddress);
        return json_encode($new);
    }
 } else {
  echo $uid;
 }
 }
-$zx = getuserdetails($clientid,$time);
+$zx = getuserdetails($clientid,$time,$rideraddress);
  // SEND GCM TO DRIVER
     $regId = $gcmid;
     $message = $zx;
@@ -240,6 +190,8 @@ $zx = getuserdetails($clientid,$time);
     $registatoin_ids = array($regId);
     $message = array("price" => $message);
     $result = $gcm->send_notification($registatoin_ids, $message);
+
+    
   function caridcheck($carid){
 $servername = "localhost";
 $username = "laundry";
@@ -314,6 +266,114 @@ else
 {
   goto a;
 }
-  
+}
+if ( $type == 'accept' ) {
+    $conn = new mysqli( $servername, $username, $password, $dbname );
+    if ( $conn->connect_error ) {
+      die( "Connection failed: " . $conn->connect_error );
+    }
+    $sql = "UPDATE drivers ".
+      "SET idle = '1'".
+      "WHERE id = $id" ;
+    $result = $conn->query( $sql );
+    $conn->close();
+    echo "accepted";
+}
+  else if ( $type == 'cancel' ) {
+    $conn = new mysqli( $servername, $username, $password, $dbname );
+    if ( $conn->connect_error ) {
+      die( "Connection failed: " . $conn->connect_error );
+    }
+   
+    $sql = "SELECT * FROM drivers WHERE id = $id";
+    $result = $conn->query($sql);
+
+    if ($result->num_rows > 0) {
+    // output data of each row
+    while($row = $result->fetch_assoc()) {
+       $drivergcmid = $row["gcm_regid"];
+    }
+}
+else {
+  echo "error";
+}
+    $conn->close();
+
+ // GCM CANCEL REQUEST TO DRIVER
+
+    $regId = $drivergcmid;
+    $message = "Your trip has been cancelled";
+    
+    include_once './GCM.php';
+    
+    $gcm = new GCM();
+    $registatoin_ids = array($regId);
+    $message = array("price" => $message);
+    $result = $gcm->send_notification($registatoin_ids, $message);
+
+}
+ else if ( $type == 'drivercancel' ) {
+    $conn = new mysqli( $servername, $username, $password, $dbname );
+    if ( $conn->connect_error ) {
+      die( "Connection failed: " . $conn->connect_error );
+    }
+   
+    $sql = "SELECT * FROM users WHERE uid = $clientid";
+    $result = $conn->query($sql);
+
+    if ($result->num_rows > 0) {
+    // output data of each row
+    while($row = $result->fetch_assoc()) {
+       $usergcmid = $row["gcm_regid"];
+    }
+}
+else {
+  echo "error";
+}
+    $conn->close();
+
+ // GCM CANCEL REQUEST TO DRIVER
+
+    $regId = $usergcmid;
+    $message = "Your trip has been cancelled";
+    
+    include_once './GCM.php';
+    
+    $gcm = new GCM();
+    $registatoin_ids = array($regId);
+    $message = array("price" => $message);
+    $result = $gcm->send_notification($registatoin_ids, $message);
+
+}
+else if ( $type == 'ignore' ) {
+    $conn = new mysqli( $servername, $username, $password, $dbname );
+    if ( $conn->connect_error ) {
+      die( "Connection failed: " . $conn->connect_error );
+    }
+    $sql = "UPDATE drivers ".
+      "SET idle = '2'".
+      "WHERE id = $id" ;
+    $result = $conn->query( $sql );
+    $conn->close();
+    echo "ignored";
+}
+else if ( $type == 'location' ) {
+
+
+ $conn = new mysqli( $servername, $username, $password, $dbname );
+    if ( $conn->connect_error ) {
+      die( "Connection failed: " . $conn->connect_error );
+    }
+$sql = "SELECT lat, lng FROM drivers WHERE id = $id";
+$result = $conn->query( $sql );
+
+if ($result->num_rows > 0) {
+    // output data of each row
+    while($row = $result->fetch_assoc()) {
+        $location = array("lat"=> $row["lat"],"lng"=> $row["lng"]);
+        echo json_encode($location);
+    }
+} 
+$conn->close();
 }
 }
